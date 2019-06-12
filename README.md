@@ -7,6 +7,9 @@
 
 一个非常简易的，基于机器学习与数据驱动的对话系统原型
 
+[对话标注工具](https://deepdialog.github.io/dialog-label/)
+[简易的Wechaty-Python-Client](https://github.com/deepdialog/wechaty-as-a-service)
+
 ## Requirement
 
 `Python >= 3.6`
