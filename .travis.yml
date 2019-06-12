@@ -1,0 +1,11 @@
+sudo: false
+language: python
+python: 3.6
+install:
+  - pip install -r requirements.txt
+  - pip install flake8 codecov coverage pydocstyle
+script:
+  - bash ./scripts/lint.sh
+  - bash ./scripts/coverage.sh
+after_success:
+  - codecov 

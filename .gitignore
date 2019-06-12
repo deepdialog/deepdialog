@@ -1,0 +1,8 @@
+*.py[cod]
+.coverage
+*.log
+/test_bot
+/build
+/dist
+*.egg-info
+/examples/simplest/model

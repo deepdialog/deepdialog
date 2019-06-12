@@ -1,0 +1,9 @@
+keras
+tensorflow
+pyyaml
+joblib
+scikit-learn
+tqdm
+numpy
+pandas
+scipy
