@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Parse Stories."""
-import os
+# import os
 import yaml
 from yaml import Loader
 
@@ -8,15 +8,16 @@ from yaml import Loader
 def parse_story(data_path):
     """Parse stories from dir."""
     stories = {}
-    for dirname, _, names in os.walk(data_path):
-        names = [x for x in names if x.lower().endswith('.yml')]
-        for name in names:
-            path = os.path.join(dirname, name)
-            obj = yaml.load(open(path), Loader=Loader)
-            assert isinstance(obj, dict)
-            for k, v in obj.items():
-                assert k not in stories, 'Story name conflict'
-                stories[k] = v
+    # for dirname, _, names in os.walk(data_path):
+    #     names = [x for x in names if x.lower().endswith('.yml')]
+    #     for name in names:
+    #         path = os.path.join(dirname, name)
+    obj = yaml.load(open(data_path), Loader=Loader)
+    assert isinstance(obj, dict)
+    assert 'story' in obj
+    for k, v in obj.get('story').items():
+        assert k not in stories, 'Story name conflict'
+        stories[k] = v
     dialogs = list(stories.values())
     user_intent_list = []
     user_domain_list = []

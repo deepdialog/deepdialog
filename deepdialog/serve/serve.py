@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Serve bot."""
 
-import os
+# import os
 import pickle
 from ..common import FAQ_INTENT
 from ..common.component import Component
@@ -12,20 +12,15 @@ class Serve(Component):
 
     def __init__(self, model_path, outside_function={}):
         """Load trained modules."""
-        faq_output = os.path.join(model_path, 'faq.model')
-        nlu_output = os.path.join(model_path, 'nlu.model')
-        nlg_output = os.path.join(model_path, 'nlg.model')
-        dst_output = os.path.join(model_path, 'dst.model')
-        dpl_output = os.path.join(model_path, 'dpl.model')
-        state_path = os.path.join(model_path, 'init_state.model')
+        data = pickle.load(open(model_path, 'rb'))
 
-        faq = pickle.load(open(faq_output, 'rb'))
-        nlu = pickle.load(open(nlu_output, 'rb'))
-        nlg = pickle.load(open(nlg_output, 'rb'))
+        faq = data.get('faq')
+        nlg = data.get('nlg')
         nlg.outside_function = outside_function
-        dst = pickle.load(open(dst_output, 'rb'))
-        dpl = pickle.load(open(dpl_output, 'rb'))
-        state = pickle.load(open(state_path, 'rb'))
+        nlu = data.get('nlu')
+        dst = data.get('dst')
+        dpl = data.get('dpl')
+        state = data.get('init_state')
 
         self.state = self.init_state = state
         self.nlu = nlu

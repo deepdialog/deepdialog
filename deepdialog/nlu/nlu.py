@@ -67,7 +67,10 @@ class NaturalLanguageUnderstanding(Component):
             ] * 10
             # TODO 一个不太好的超参，控制FAQ和其他对话的训练比例
 
-        self.ner_slot = NERSlotFiller()
+        # import pdb; pdb.set_trace()
+        # Entity as B, I as * 2 + Outer
+        self.ner_slot = NERSlotFiller(len(self.slot_list) * 2 + 1)
+
         self.ner_slot.fit(sentences, slots)
 
         slot_accuracy, _ = self.ner_slot.eval(

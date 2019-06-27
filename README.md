@@ -43,11 +43,11 @@ User --> LU --> DST
 训练：
 
 ```bash
-$ python3 -m deepdialog.train ./examples/simplest/ /tmp/simplest_model
+$ python3 -m deepdialog.train ./examples/sample.yml /tmp/sample.model
 ```
 
 服务于控制台
 
 ```bash
-$ python3 -m deepdialog.serve /tmp/simplest_model/
+$ python3 -m deepdialog.serve /tmp/sample.model
 ```

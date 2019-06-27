@@ -1,0 +1,139 @@
+nlu:
+  - domain: ''
+    intent: hello
+    data:
+      - text: 你好
+  - domain: ''
+    intent: hello
+    data:
+      - text: hello
+  - domain: ''
+    intent: hello
+    data:
+      - text: hi
+  - domain: ''
+    intent: hello
+    data:
+      - text: 你好啊
+  - domain: ''
+    intent: bye
+    data:
+      - text: 再见
+  - domain: ''
+    intent: bye
+    data:
+      - text: 再见啦
+  - domain: ''
+    intent: bye
+    data:
+      - text: bye
+  - domain: ''
+    intent: bye
+    data:
+      - text: 拜拜
+  - domain: weather
+    intent: inform
+    data:
+      - text: 北京
+        start: 0
+        end: 2
+        name: city
+      - text: 今天
+        start: 2
+        end: 4
+        name: date
+      - text: 天气怎么样
+  - domain: weather
+    intent: inform
+    data:
+      - text: 今天
+        start: 0
+        end: 2
+        name: date
+      - text: 北京
+        start: 2
+        end: 4
+        name: city
+      - text: 的天气
+  - domain: weather
+    intent: inform
+    data:
+      - text: 北京
+        start: 0
+        end: 2
+        name: city
+      - text: 天气
+  - domain: ''
+    intent: inform
+    data:
+      - text: 北京
+        start: 0
+        end: 2
+        name: city
+  - domain: ''
+    intent: inform
+    data:
+      - text: 今天
+        start: 0
+        end: 2
+        name: date
+  - domain: weather
+    intent: inform
+    data:
+      - text: 天气怎么样
+  - domain: weather
+    intent: inform
+    data:
+      - text: 我要问天气
+  - entity: city
+    data:
+      - - 北京
+        - 首都
+        - 北京市
+      - 上海市
+      - - 西安市
+        - 西安
+  - entity: date
+    data:
+      - 今天
+      - 后天
+      - 明天
+    regex: ''
+    copyFrom: ''
+story:
+  hello:
+    - user: hello
+    - sys: hello
+  bye:
+    - user: bye
+    - sys: bye
+  ask_weather_01:
+    - user: 'weather::inform'
+    - sys: requestCity
+    - user: inform(city)
+    - sys: requestDate
+    - user: inform(date)
+    - sys: informWeather
+  ask_weather_02:
+    - user: 'weather::inform(city, date)'
+    - sys: informWeather
+nlg:
+  - sysact: None
+    response: 我不知道你在说什么
+  - sysact: informWeather
+    response: '你好{city}在{date}的天气不错哦'
+  - sysact: requestDate
+    response: 你问哪天呢
+  - sysact: requestCity
+    response: 你问哪个城市呢？
+  - sysact: bye
+    response: 再见咯
+  - sysact: hello
+    response: 你好呀
+faq:
+  - question: 你的版本
+    answer: 0.0.1
+  - question: 你会干嘛
+    answer: 我用来演示多论对话的基本能力
+  - question: 你是谁
+    answer: 我是测试用机器人

@@ -24,17 +24,21 @@ class NaturalLanguageGenerator(Component):
         """Fit the model."""
         assert os.path.exists(data_path)
         data = {}
-        for dirname, _, names in os.walk(data_path):
-            names = [x for x in names if x.lower().endswith('.yml')]
-            for name in names:
-                path = os.path.join(dirname, name)
-                obj = yaml.load(open(path), Loader=Loader)
-                for k, v in obj.items():
-                    assert k not in data
-                    if v == 'ext':
-                        data[k] = ('func', k)
-                    else:
-                        data[k] = v
+        # for dirname, _, names in os.walk(data_path):
+        #     names = [x for x in names if x.lower().endswith('.yml')]
+        #     for name in names:
+        #         path = os.path.join(dirname, name)
+        obj = yaml.load(open(data_path), Loader=Loader)
+        assert 'nlg' in obj
+        for item in obj.get('nlg'):
+            assert 'sysact' in item
+            assert 'response' in item
+            k, v = item.get('sysact'), item.get('response')
+            assert k not in data
+            if v == 'ext':
+                data[k] = ('func', k)
+            else:
+                data[k] = v
         self.mapping = data
         self.intent_list = sorted(data.keys())
         assert 'None' in self.mapping, \
@@ -55,6 +59,8 @@ class NaturalLanguageGenerator(Component):
         elif isinstance(response, tuple) \
                 and len(response) == 2 and response[0] == 'func':
             utterance = self.outside_function[response[1]](state)
+        elif isinstance(response, str):
+            utterance = response
         else:
             raise RuntimeError('Invalid response')
         return utterance

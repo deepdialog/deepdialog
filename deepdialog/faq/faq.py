@@ -34,16 +34,27 @@ class FrequentlyAskedQuestions(Component):
             return
         exists = {}
         data = []
-        for dirname, _, names in os.walk(data_path):
-            names = [x for x in names if x.lower().endswith('.yml')]
-            for name in names:
-                path = os.path.join(dirname, name)
-                obj = yaml.load(open(path), Loader=Loader)
-                assert isinstance(obj, dict)
-                for k, v in obj.items():
-                    assert k not in exists
-                    exists[k] = True
-                    data.append((k, v))
+        # for dirname, _, names in os.walk(data_path):
+        #     names = [x for x in names if x.lower().endswith('.yml')]
+        #     for name in names:
+        #         path = os.path.join(dirname, name)
+        #         obj = yaml.load(open(path), Loader=Loader)
+        #         assert isinstance(obj, dict)
+        #         for k, v in obj.items():
+        #             assert k not in exists
+        #             exists[k] = True
+        #             data.append((k, v))
+        obj = yaml.load(open(data_path), Loader=Loader)
+        assert isinstance(obj, dict)
+        assert 'faq' in obj
+        for item in obj.get('faq'):
+            assert 'question' in item
+            assert 'answer' in item
+            k = item.get('question')
+            v = item.get('answer')
+            assert k not in exists
+            exists[k] = True
+            data.append((k, v))
         self.data = data
         self.questions = [x[0] for x in data]
         self.tfidf = TfidfVectorizer(

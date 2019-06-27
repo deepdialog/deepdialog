@@ -110,15 +110,17 @@ def get_exact_right(slot_true, slot_pred):
 class NERSlotFiller(object):
     """NER Slot Classifier."""
 
-    def __init__(self, maxlen=50, vocab_size=10000):
+    def __init__(self, label_size, maxlen=50, vocab_size=10000):
         """Init."""
         self.ner = None
+        self.label_size = label_size
         self.maxlen = maxlen
         self.vocab_size = vocab_size
 
     def fit(self,
             sentence_result,
-            slot_result):
+            slot_result,
+            epochs=40):
         """Fit model."""
         self.tokenizer = Tokenizer(
             num_words=self.vocab_size, char_level=True, lower=False)
@@ -126,14 +128,23 @@ class NERSlotFiller(object):
         seq = self.tokenizer.texts_to_sequences(sentence_result)
         seq_pad = pad_sequences(seq, maxlen=self.maxlen)
 
+        # import pdb; pdb.set_trace()
         self.tokenizer_y = Tokenizer(
-            num_words=self.vocab_size, char_level=True, lower=False)
+            num_words=self.label_size+1, char_level=True, lower=False)
         self.tokenizer_y.fit_on_texts(slot_result)
         seq_y = self.tokenizer_y.texts_to_sequences(slot_result)
         seq_pad_y = pad_sequences(seq_y, maxlen=self.maxlen)
+        # For CRF
+        # seq_pad_y = seq_pad_y.reshape(
+        #     seq_pad_y.shape[0], seq_pad_y.shape[1], 1)
+        # For Softmax
+        seq_pad_y = to_categorical(seq_pad_y)
 
-        self.ner = get_model(len(self.tokenizer_y.word_index) + 1)
-        self.ner.model.fit(seq_pad, to_categorical(seq_pad_y), epochs=5)
+        self.ner = get_model(n_output=self.label_size+1)
+        self.ner.model.fit(
+            seq_pad,
+            seq_pad_y,
+            epochs=epochs)
 
     def predict_slot(self, nlu_obj):
         """Predict Slot."""
@@ -175,9 +186,11 @@ class NERSlotFiller(object):
     def predict(self, sentence_result):
         """Predict sentence."""
         assert self.ner is not None, 'model not fitted'
+        # import pdb; pdb.set_trace()
         seq = self.tokenizer.texts_to_sequences(sentence_result)
         seq_pad = pad_sequences(seq, maxlen=self.maxlen)
-        y_pred = self.ner.predict_proba(seq_pad).argmax(-1)
+        y_pred = self.ner.predict_proba(seq_pad)
+        y_pred = y_pred.argmax(-1)
         y_pred = self.tokenizer_y.sequences_to_texts(y_pred)
         y_pred = tuple([
             y.split(' ')[-len(s):]

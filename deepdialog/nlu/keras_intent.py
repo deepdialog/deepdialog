@@ -21,7 +21,7 @@ def make_model(n_size, n_output, n_embedding, n_vocab):
 
 
 def get_model(n_output,
-              n_size=64, epochs=5,
+              n_size=64, epochs=10,
               batch_size=32,
               n_embedding=100,
               n_vocab=10000):

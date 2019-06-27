@@ -40,7 +40,7 @@ def main(data_path,
         n_times: 都个story组合轮次
     """
     faq = FrequentlyAskedQuestions()
-    faq.fit(os.path.join(data_path, 'faq'))
+    faq.fit(data_path)
 
     # NLU Part
     if len(faq):
@@ -56,7 +56,7 @@ def main(data_path,
     logger.info('NLG Intents:')
     logger.info('\n'.join(nlg.intent_list))
 
-    story_path = os.path.join(data_path, 'story')
+    # story_path = os.path.join(data_path, 'story')
     # parse_story会返回下面这些
     # {
     #     'dialog': dialogs,
@@ -66,7 +66,7 @@ def main(data_path,
     #     'sys_intent': sys_intent_list,
     #     'sys_slot': sys_slot_list,
     # }
-    stories = parse_story(story_path)
+    stories = parse_story(data_path)
     # 检查NLU和stories是否冲突
     for ud in stories['user_domain']:
         assert ud in nlu.domain_list, 'user domain {} not in NLU'.format(ud)
@@ -95,40 +95,54 @@ def main(data_path,
     # DPL Part
     dpl = train_dpl(x_dpl, y_dpl)
 
-    # Init State
-    state_path = os.path.join(model_path, 'init_state.model')
-    mkdir(model_path)
-    with open(state_path, 'wb') as fp:
-        pickle.dump(init_state, fp)
+    data = {
+        'init_state': init_state,
+        'faq': faq,
+        'nlu': nlu,
+        'nlg': nlg,
+        'dst': dst,
+        'dpl': dpl,
+    }
+
+    model_path_dir = os.path.dirname(model_path)
+    mkdir(model_path_dir)
+    with open(model_path, 'wb') as fp:
+        pickle.dump(data, fp)
 
     logger.info('\n')
     logger.info('Train done')
 
-    # Save
-    mkdir(model_path)
-    faq_output = os.path.join(model_path, 'faq.model')
-    with open(faq_output, 'wb') as fp:
-        pickle.dump(faq, fp)
-    nlu_output = os.path.join(model_path, 'nlu.model')
-    with open(nlu_output, 'wb') as fp:
-        pickle.dump(nlu, fp)
-    nlg_output = os.path.join(model_path, 'nlg.model')
-    with open(nlg_output, 'wb') as fp:
-        pickle.dump(nlg, fp)
-    dst_output = os.path.join(model_path, 'dst.model')
-    with open(dst_output, 'wb') as fp:
-        pickle.dump(dst, fp)
-    dpl_output = os.path.join(model_path, 'dpl.model')
-    with open(dpl_output, 'wb') as fp:
-        pickle.dump(dpl, fp)
+    # # Init State
+    # state_path = os.path.join(model_path, 'init_state.model')
+    # mkdir(model_path)
+    # with open(state_path, 'wb') as fp:
+    #     pickle.dump(init_state, fp)
+
+    # # Save
+    # mkdir(model_path)
+    # faq_output = os.path.join(model_path, 'faq.model')
+    # with open(faq_output, 'wb') as fp:
+    #     pickle.dump(faq, fp)
+    # nlu_output = os.path.join(model_path, 'nlu.model')
+    # with open(nlu_output, 'wb') as fp:
+    #     pickle.dump(nlu, fp)
+    # nlg_output = os.path.join(model_path, 'nlg.model')
+    # with open(nlg_output, 'wb') as fp:
+    #     pickle.dump(nlg, fp)
+    # dst_output = os.path.join(model_path, 'dst.model')
+    # with open(dst_output, 'wb') as fp:
+    #     pickle.dump(dst, fp)
+    # dpl_output = os.path.join(model_path, 'dpl.model')
+    # with open(dpl_output, 'wb') as fp:
+    #     pickle.dump(dpl, fp)
 
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='Train DeepDialog Model')
     parser.add_argument(
-        'data_dir', type=str)
+        'data_path', type=str)
     parser.add_argument(
-        'model_dir', type=str)
+        'model_path', type=str)
     args = parser.parse_args()
-    main(args.data_dir, args.model_dir)
+    main(args.data_path, args.model_path)
