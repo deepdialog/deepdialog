@@ -66,22 +66,14 @@ def build_dialog_train_data(dialogs, init_state, n_history, n_times):
             state = history[-1].clone()  # last history
             if 'user' in turn:
 
-                # if turn['intent'] == 'hello':
-                #     if sum(state.slot_vec.tolist()) >= 2:
-                #         import pdb; pdb.set_trace()
-
-                # if turn['intent'] == 'hello':
-                #     import pdb; pdb.set_trace()
                 new_state = make_new_state(
-                    init_state.clone(),  # if turn_ind == 0 else state,
+                    init_state.clone(),
                     turn['domain'],
                     turn['intent'],
                     turn['slots']
                 )
 
                 y = np.array([
-                    # (0. if b is None else 1.) if a != b else 0.
-                    # 1 if (b is not None and b != a) else 0
                     1 if b > 0 else 0
                     for a, b in zip(
                         state.slot_vec.tolist(),
