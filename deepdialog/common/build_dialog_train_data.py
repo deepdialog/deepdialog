@@ -30,13 +30,13 @@ def make_new_state(state, domain, intent, slots, utterance=''):
             stype = 'informable'
         filled.append(slot_name)
         new_state[(stype, slot_name)] = value
-    for slot in new_state.slots:
-        if slot['type'] == 'informable' \
-                and slot['name'] not in filled:
-            slot['value'] = None
-        elif slot['type'] == 'requestable' \
-                and slot['name'] not in filled:
-            slot['value'] = None
+    # for slot in new_state.slots:
+    #     if slot['type'] == 'informable' \
+    #             and slot['name'] not in filled:
+    #         slot['value'] = None
+    #     elif slot['type'] == 'requestable' \
+    #             and slot['name'] not in filled:
+    #         slot['value'] = None
     return new_state
 
 
@@ -62,28 +62,41 @@ def build_dialog_train_data(dialogs, init_state, n_history, n_times):
             for i in range(n_history):
                 history.append(init_state.clone())
             continue
-        for turn in dialog:
+        for turn_ind, turn in enumerate(dialog):
             state = history[-1].clone()  # last history
             if 'user' in turn:
+
+                # if turn['intent'] == 'hello':
+                #     if sum(state.slot_vec.tolist()) >= 2:
+                #         import pdb; pdb.set_trace()
+
+                # if turn['intent'] == 'hello':
+                #     import pdb; pdb.set_trace()
                 new_state = make_new_state(
-                    init_state,
+                    init_state.clone(),  # if turn_ind == 0 else state,
                     turn['domain'],
                     turn['intent'],
                     turn['slots']
                 )
 
-                slot_vec = state.slot_vec
-                new_slot_vec = new_state.slot_vec
                 y = np.array([
-                    1. if a != b else 0.
+                    # (0. if b is None else 1.) if a != b else 0.
+                    # 1 if (b is not None and b != a) else 0
+                    1 if b > 0 else 0
                     for a, b in zip(
-                        slot_vec.tolist(), new_slot_vec.tolist())
+                        state.slot_vec.tolist(),
+                        new_state.slot_vec.tolist()
+                    )
                 ])
 
-                x = np.array([
-                    s.vec
-                    for s in history
-                ] + [new_state.vec])
+                state.user_intent = new_state.user_intent
+                state.user_domain = new_state.user_domain
+                state.utterance = new_state.utterance
+                for i, slot in enumerate(new_state.slots):
+                    if y[i] > 0.5:
+                        state.slots[i] = slot
+
+                x = np.array([history[-1].vec] + [new_state.vec])
                 x_dst.append(x)
                 y_dst.append(y)
                 if np.sum(y) > 0:
@@ -91,7 +104,7 @@ def build_dialog_train_data(dialogs, init_state, n_history, n_times):
                         x_dst.append(x)
                         y_dst.append(y)
 
-                history = history[1:] + [new_state]
+                history = history[1:] + [state]
             if 'sys' in turn:
                 x = np.array([s.vec for s in history])
                 state.sys_intent = turn['intent']  # 设置为了获取y向量，不影响history

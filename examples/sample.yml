@@ -117,6 +117,23 @@ story:
   ask_weather_02:
     - user: 'weather::inform(city, date)'
     - sys: informWeather
+  ask_weather_03:
+    - user: 'weather::inform'
+    - sys: requestCity
+    - user: inform(date)
+    - sys: requestCity
+    - user: inform(city)
+    - sys: informWeather
+  ask_weather_04:
+    - user: 'weather::inform(city)'
+    - sys: requestDate
+    - user: inform(date)
+    - sys: informWeather
+  ask_weather_05:
+    - user: 'weather::inform(date)'
+    - sys: requestCity
+    - user: inform(city)
+    - sys: informWeather
 nlg:
   - sysact: None
     response: 我不知道你在说什么

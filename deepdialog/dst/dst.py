@@ -31,6 +31,7 @@ class DialogStateTracker(Component):
         state = history[-1].clone()
         new_state = make_new_state(
             init_state.clone(),
+            # state,
             user_action.domain,
             user_action.intent,
             user_action.slots,
@@ -38,18 +39,17 @@ class DialogStateTracker(Component):
         )
 
         if self.clf is not None:
-            x = np.array([
-                s.vec
-                for s in history
-            ] + [new_state.vec])
+            x = np.array([history[-1].vec] + [new_state.vec])
 
-            print('new state', str(new_state))
+            # import pdb; pdb.set_trace()
 
             pred = self.clf.predict_proba(np.array([x])).flatten()
             print('pred', pred)
             for i, slot in enumerate(new_state.slots):
-                if pred[i] > 0.0:
+                if pred[i] > 0.5:
+                    print(f'change slot {i}')
                     state.slots[i] = slot
+            print('new state after fill', str(state))
 
         state.user_intent = new_state.user_intent
         state.user_domain = new_state.user_domain
