@@ -10,13 +10,12 @@ from ..common.component import Component
 class Serve(Component):
     """Serve bot."""
 
-    def __init__(self, model_path, outside_function={}):
+    def __init__(self, model_path):
         """Load trained modules."""
         data = pickle.load(open(model_path, 'rb'))
 
         faq = data.get('faq')
         nlg = data.get('nlg')
-        nlg.outside_function = outside_function
         nlu = data.get('nlu')
         dst = data.get('dst')
         dpl = data.get('dpl')

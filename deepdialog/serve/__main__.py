@@ -4,9 +4,9 @@
 from .serve import Serve
 
 
-def main(model_path, outside_function={}):
+def main(model_path):
     """Serve entrace."""
-    return Serve(model_path, outside_function)
+    return Serve(model_path)
 
 
 if __name__ == '__main__':
