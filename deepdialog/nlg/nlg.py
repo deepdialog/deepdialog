@@ -8,6 +8,7 @@ from yaml import Loader
 from ..common.system_action import SystemAction
 from ..common.dialog_state import DialogState
 from ..common.component import Component
+from .ext_sysact import load_ext
 
 
 class NaturalLanguageGenerator(Component):
@@ -58,7 +59,9 @@ class NaturalLanguageGenerator(Component):
             utterance = random.choice(response)
         elif isinstance(response, tuple) \
                 and len(response) == 2 and response[0] == 'func':
-            utterance = self.outside_function[response[1]](state)
+            func = load_ext(response[1])
+            utterance = func(state)
+            # utterance = self.outside_function[response[1]](state)
         elif isinstance(response, str):
             utterance = response
         else:
