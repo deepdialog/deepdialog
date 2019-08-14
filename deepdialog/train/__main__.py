@@ -112,30 +112,6 @@ def main(data_path,
     logger.info('\n')
     logger.info('Train done')
 
-    # # Init State
-    # state_path = os.path.join(model_path, 'init_state.model')
-    # mkdir(model_path)
-    # with open(state_path, 'wb') as fp:
-    #     pickle.dump(init_state, fp)
-
-    # # Save
-    # mkdir(model_path)
-    # faq_output = os.path.join(model_path, 'faq.model')
-    # with open(faq_output, 'wb') as fp:
-    #     pickle.dump(faq, fp)
-    # nlu_output = os.path.join(model_path, 'nlu.model')
-    # with open(nlu_output, 'wb') as fp:
-    #     pickle.dump(nlu, fp)
-    # nlg_output = os.path.join(model_path, 'nlg.model')
-    # with open(nlg_output, 'wb') as fp:
-    #     pickle.dump(nlg, fp)
-    # dst_output = os.path.join(model_path, 'dst.model')
-    # with open(dst_output, 'wb') as fp:
-    #     pickle.dump(dst, fp)
-    # dpl_output = os.path.join(model_path, 'dpl.model')
-    # with open(dpl_output, 'wb') as fp:
-    #     pickle.dump(dpl, fp)
-
 
 if __name__ == '__main__':
     import argparse

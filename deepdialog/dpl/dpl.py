@@ -26,6 +26,7 @@ class DialogPolicyLearning(Component):
         pred = self.clf.predict(np.array([x])).flatten()
         pred = pred[0]
         system_action = SystemAction(history[-1].index_sys_intent[pred])
+        print('new system_action', str(system_action))
         return system_action
 
     def fit(self, x, y):

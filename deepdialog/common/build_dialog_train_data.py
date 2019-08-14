@@ -30,13 +30,6 @@ def make_new_state(state, domain, intent, slots, utterance=''):
             stype = 'informable'
         filled.append(slot_name)
         new_state[(stype, slot_name)] = value
-    # for slot in new_state.slots:
-    #     if slot['type'] == 'informable' \
-    #             and slot['name'] not in filled:
-    #         slot['value'] = None
-    #     elif slot['type'] == 'requestable' \
-    #             and slot['name'] not in filled:
-    #         slot['value'] = None
     return new_state
 
 
